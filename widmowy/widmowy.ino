@@ -42,10 +42,7 @@ void setup()
   
   pinMode(led, OUTPUT);
   
-  digitalWrite(led, HIGH);
-  delay(500);
-  digitalWrite(led, LOW);
-
+  migaj(1,500);
   
   ws2811.init(DATA_PIN,NUM_PIXELS);
   leds = (struct CRGB*)ws2811.getRGBData();
@@ -72,86 +69,44 @@ void setup()
     
      
     for(int x=0; x<width; x++){       
-        Serial.println(x);
+        //Serial.println(x);
         
         char bufor2[12*height];
         myFile.read(bufor2, 12*height);
         
         for(int y=0; y<height; y++){
-            /* *
-            // 43 sekundy
-            r = myFile.parseInt();
-            g = myFile.parseInt();
-            b = myFile.parseInt();
-            /* */
-            
-            /* *
-            // 15 sekund
-            r = (myFile.read()-'0')*100 + (myFile.read()-'0')*10 + (myFile.read()-'0')*1;
-            myFile.read();
-            g = (myFile.read()-'0')*100 + (myFile.read()-'0')*10 + (myFile.read()-'0')*1;
-            myFile.read();
-            b = (myFile.read()-'0')*100 + (myFile.read()-'0')*10 + (myFile.read()-'0')*1;
-            myFile.read();
-            /* */
 
-            
-            /* *
-            // 17 sekund
-            char bufor[12];
-            myFile.readBytes(bufor, 12);
-            r = bufor[0]*100+bufor[1]*10+bufor[2] - 111*'0';
-            g = bufor[4]*100+bufor[5]*10+bufor[6] - 111*'0';
-            b = bufor[8]*100+bufor[9]*10+bufor[10] - 111*'0';
-            //r = bufor[0]*100+bufor[1]*10+bufor[2];
-            //g = bufor[4]*100+bufor[5]*10+bufor[6];
-            //b = bufor[8]*100+bufor[9]*10+bufor[10];
-            /* */
-            
-            /* */
-            // 16 sekund
             int offset = 12*y;
             r = bufor2[offset+0]*100+bufor2[offset+1]*10+bufor2[offset+2] - 111*'0';
             g = bufor2[offset+4]*100+bufor2[offset+5]*10+bufor2[offset+6] - 111*'0';
             b = bufor2[offset+8]*100+bufor2[offset+9]*10+bufor2[offset+10] - 111*'0';
-            /* */           
-            
             
             ustaw(y, r, g, b);
-            /* *
-            Serial.print(r);
-            Serial.print(' ');
-            Serial.print(g);
-            Serial.print(' ');
-            Serial.print(b);
-            Serial.println();
-            /* */
+
         }
         ws2811.sendLedData();
         
-        //delay(1);
+        delay(10);
         //Serial.print("\n");
     }
     
     czysc();
     
-    
     myFile.close();
+
   } else {
-    // if the file didn't open, print an error:
-    //Serial.println("error opening test.txt");
+    // blad pliku
   }
   
+
 }
+
 
 void loop()
 {
-    // nothing happens after setup
-    digitalWrite(LED_PIN, HIGH);
-    delay(200);
-    digitalWrite(LED_PIN, LOW);
-    delay(200);
+
 }
+
 
 void czysc()
 {
@@ -166,6 +121,7 @@ void czysc()
   ws2811.sendLedData();
 }
 
+
 void ustaw(int y, int r, int g, int b){
   float scale = 0.2;
   
@@ -173,6 +129,7 @@ void ustaw(int y, int r, int g, int b){
   leds[y].g = (int)(g*scale);
   leds[y].b = (int)(b*scale);
 }
+
 
 void start(){
   for(int y=5; y>=0; y--) leds[y].r=leds[y].g=leds[y].b = 128;
@@ -183,3 +140,12 @@ void start(){
   } 
 }
 
+
+void migaj(int ile, int time){
+  for(int i=0; i<ile; i++){  
+    digitalWrite(led, HIGH);
+    delay(time);
+    digitalWrite(led, LOW);
+    if(i != ile-1) delay(time);
+  }
+}
